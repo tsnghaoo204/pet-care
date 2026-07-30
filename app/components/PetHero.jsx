@@ -9,14 +9,12 @@ export function PetHero() {
   const catTimerRef = useRef(null);
   const [isCatHovered, setIsCatHovered] = useState(false);
   const [isCatGifPlaying, setIsCatGifPlaying] = useState(false);
-  const [catGifKey, setCatGifKey] = useState(Date.now());
 
   // --- GIF-DOG (DOG CƯNG) STATES & REFS ---
   const dogCanvasRef = useRef(null);
   const dogTimerRef = useRef(null);
   const [isDogHovered, setIsDogHovered] = useState(false);
   const [isDogGifPlaying, setIsDogGifPlaying] = useState(false);
-  const [dogGifKey, setDogGifKey] = useState(Date.now());
 
   // --- GIF-MEME (CAT MEME) STATES & REFS ---
   const [isCatMemeHovered, setIsCatMemeHovered] = useState(false);
@@ -62,7 +60,6 @@ export function PetHero() {
   const handleCatMouseEnter = () => {
     setIsCatHovered(true);
     setIsCatGifPlaying(true);
-    setCatGifKey(Date.now());
     if (catTimerRef.current) clearTimeout(catTimerRef.current);
   };
 
@@ -76,7 +73,6 @@ export function PetHero() {
   const handleDogMouseEnter = () => {
     setIsDogHovered(true);
     setIsDogGifPlaying(true);
-    setDogGifKey(Date.now());
     if (dogTimerRef.current) clearTimeout(dogTimerRef.current);
   };
 
@@ -127,7 +123,7 @@ export function PetHero() {
               </div>
             )}
 
-            {/* Always-Playing Animated GIF (No hover required to play loop) */}
+            {/* Always-Playing Animated GIF */}
             <img
               src="/img/gif-meme.gif"
               alt="gif-meme"
@@ -171,8 +167,7 @@ export function PetHero() {
 
             {/* Animated GIF Image */}
             <img
-              key={catGifKey}
-              src={`/img/gif-cat.gif?t=${catGifKey}`}
+              src="/img/gif-cat.gif"
               alt="gif-cat"
               className="cat-media-element"
               style={{
@@ -216,8 +211,7 @@ export function PetHero() {
 
             {/* Animated GIF Image */}
             <img
-              key={dogGifKey}
-              src={`/img/gif-dog.gif?t=${dogGifKey}`}
+              src="/img/gif-dog.gif"
               alt="gif-dog"
               className="cat-media-element"
               style={{
