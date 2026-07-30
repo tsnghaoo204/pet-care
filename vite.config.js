@@ -27,6 +27,9 @@ export default defineConfig(({isSsrBuild}) => ({
                 if (id.includes('node_modules')) {
                   return 'vendor';
                 }
+                if (id.includes('/app/components/')) {
+                  return 'app-components';
+                }
               },
             },
           },
