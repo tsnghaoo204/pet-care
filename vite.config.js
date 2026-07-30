@@ -4,7 +4,7 @@ import {hydrogen} from '@shopify/hydrogen/vite';
 import {oxygen} from '@shopify/mini-oxygen/vite';
 import {reactRouter} from '@react-router/dev/vite';
 
-export default defineConfig({
+export default defineConfig(({isSsrBuild}) => ({
   plugins: [hydrogen(), oxygen(), reactRouter()],
   resolve: {
     alias: {
@@ -18,31 +18,22 @@ export default defineConfig({
     // Allow a strict Content-Security-Policy
     // without inlining assets as base64:
     assetsInlineLimit: 0,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-          if (id.includes('/app/')) {
-            return 'app-shared';
-          }
-        },
-      },
-    },
+    ...(isSsrBuild
+      ? {}
+      : {
+          rollupOptions: {
+            output: {
+              manualChunks(id) {
+                if (id.includes('node_modules')) {
+                  return 'vendor';
+                }
+              },
+            },
+          },
+        }),
   },
   ssr: {
     optimizeDeps: {
-      /**
-       * Include dependencies here if they throw CJS<>ESM errors.
-       * For example, for the following error:
-       *
-       * > ReferenceError: module is not defined
-       * >   at /Users/.../node_modules/example-dep/index.js:1:1
-       *
-       * Include 'example-dep' in the array below.
-       * @see https://vitejs.dev/config/dep-optimization-options
-       */
       include: [
         'react-router > set-cookie-parser',
         'react-router > cookie',
@@ -53,4 +44,4 @@ export default defineConfig({
   server: {
     allowedHosts: ['.tryhydrogen.dev'],
   },
-});
+}));
