@@ -1269,10 +1269,11 @@ button.reset:hover:not(:has(> *)) {
   border-color: var(--pet-primary);
 }
 
-height: 320px;
-border-radius: var(--pet-border-radius-sm);
-overflow: hidden;
-position: relative;
+.pet-hero-img-wrap {
+  height: 320px;
+  border-radius: var(--pet-border-radius-sm);
+  overflow: hidden;
+  position: relative;
 }
 
 .pet-hero-img-wrap img {
