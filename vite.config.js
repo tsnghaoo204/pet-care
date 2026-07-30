@@ -18,6 +18,18 @@ export default defineConfig({
     // Allow a strict Content-Security-Policy
     // without inlining assets as base64:
     assetsInlineLimit: 0,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+          if (id.includes('/app/')) {
+            return 'app-shared';
+          }
+        },
+      },
+    },
   },
   ssr: {
     optimizeDeps: {
