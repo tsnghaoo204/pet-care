@@ -42,44 +42,52 @@ export default function AccountLayout() {
 
   const heading = customer
     ? customer.firstName
-      ? `Welcome, ${customer.firstName}`
-      : `Welcome to your account.`
-    : 'Account Details';
+      ? `Welcome back, ${customer.firstName}! 🐾`
+      : `Welcome to your Pet Care Account.`
+    : 'Account Overview';
 
   return (
-    <div className="account">
-      <h1>{heading}</h1>
-      <br />
+    <div className="pet-container" style={{paddingTop: '3rem', paddingBottom: '4rem'}}>
+      <div className="pet-account-header">
+        <div className="pet-account-avatar">
+          <span>🐾</span>
+        </div>
+        <div>
+          <h1 className="pet-account-title">{heading}</h1>
+          <p className="pet-account-email">{customer?.emailAddress?.emailAddress || 'Pet Lover'}</p>
+        </div>
+      </div>
+
       <AccountMenu />
-      <br />
-      <br />
-      <Outlet context={{customer}} />
+
+      <div className="pet-account-content">
+        <Outlet context={{customer}} />
+      </div>
     </div>
   );
 }
 
 function AccountMenu() {
-  function isActiveStyle({isActive, isPending}) {
-    return {
-      fontWeight: isActive ? 'bold' : undefined,
-      color: isPending ? 'grey' : 'black',
-    };
-  }
-
   return (
-    <nav role="navigation">
-      <NavLink to="/account/orders" style={isActiveStyle}>
-        Orders &nbsp;
+    <nav className="pet-account-nav" role="navigation">
+      <NavLink
+        to="/account/orders"
+        className={({isActive}) => (isActive ? 'pet-account-tab active' : 'pet-account-tab')}
+      >
+        📦 Order History
       </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/profile" style={isActiveStyle}>
-        &nbsp; Profile &nbsp;
+      <NavLink
+        to="/account/profile"
+        className={({isActive}) => (isActive ? 'pet-account-tab active' : 'pet-account-tab')}
+      >
+        👤 Profile Details
       </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/addresses" style={isActiveStyle}>
-        &nbsp; Addresses &nbsp;
+      <NavLink
+        to="/account/addresses"
+        className={({isActive}) => (isActive ? 'pet-account-tab active' : 'pet-account-tab')}
+      >
+        📍 Shipping Addresses
       </NavLink>
-      &nbsp;|&nbsp;
       <Logout />
     </nav>
   );
@@ -88,7 +96,9 @@ function AccountMenu() {
 function Logout() {
   return (
     <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
+      <button type="submit" className="pet-logout-btn">
+        🚪 Sign Out
+      </button>
     </Form>
   );
 }

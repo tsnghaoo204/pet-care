@@ -1,67 +1,51 @@
+import {useState} from 'react';
 import {Link, useLoaderData} from 'react-router';
-import {Image, getPaginationVariables} from '@shopify/hydrogen';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {getPaginationVariables, Image} from '@shopify/hydrogen';
 
 /**
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.blog.title ?? ''} blog`}];
+  return [{title: `Pet Care | ${data?.blog?.title ?? 'Pet Care Journal'} Blog`}];
 };
 
-/**
- * @param {Route.LoaderArgs} args
- */
 export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- * @param {Route.LoaderArgs}
- */
 async function loadCriticalData({context, request, params}) {
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 4,
+    pageBy: 8,
   });
 
-  if (!params.blogHandle) {
-    throw new Response(`blog not found`, {status: 404});
-  }
+  const {blogHandle} = params;
+  let blogData = null;
 
-  const [{blog}] = await Promise.all([
-    context.storefront.query(BLOGS_QUERY, {
+  try {
+    const res = await context.storefront.query(BLOGS_QUERY, {
       variables: {
-        blogHandle: params.blogHandle,
+        blogHandle: blogHandle || 'news',
         ...paginationVariables,
       },
-    }),
-    // Add other queries here, so that they are loaded in parallel
-  ]);
-
-  if (!blog?.articles) {
-    throw new Response('Not found', {status: 404});
+    });
+    blogData = res?.blog ?? null;
+  } catch (e) {
+    // Fallback
   }
 
-  redirectIfHandleIsLocalized(request, {handle: params.blogHandle, data: blog});
+  if (!blogData) {
+    blogData = {
+      title: 'Pet Care Journal & Guides',
+      handle: blogHandle || 'news',
+      articles: { nodes: [] },
+    };
+  }
 
-  return {blog};
+  return {blog: blogData};
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- * @param {Route.LoaderArgs}
- */
 function loadDeferredData({context}) {
   return {};
 }
@@ -69,60 +53,99 @@ function loadDeferredData({context}) {
 export default function Blog() {
   /** @type {LoaderReturnData} */
   const {blog} = useLoaderData();
-  const {articles} = blog;
+  const [activeTab, setActiveTab] = useState('all');
+
+  const displayArticles = blog?.articles?.nodes ?? [];
+
+  const filteredArticles = displayArticles.filter((article) => {
+    const cat = (article.category || article.title || '').toLowerCase();
+    if (activeTab === 'cat') return cat.includes('cat');
+    if (activeTab === 'dog') return cat.includes('dog');
+    return true;
+  });
 
   return (
-    <div className="blog">
-      <h1>{blog.title}</h1>
-      <div className="blog-grid">
-        <PaginatedResourceSection connection={articles}>
-          {({node: article, index}) => (
-            <ArticleItem
-              article={article}
-              key={article.id}
-              loading={index < 2 ? 'eager' : 'lazy'}
-            />
-          )}
-        </PaginatedResourceSection>
+    <div className="pet-container" style={{paddingTop: '2.5rem', paddingBottom: '5rem'}}>
+      <div className="pet-blog-hero">
+        <div className="pet-section-badge">🐾 Pet Care Journal</div>
+        <h1 className="pet-blog-title">{blog.title || 'Dog & Cat Care Blog 📚'}</h1>
+        <p className="pet-blog-subtitle">
+          Expert advice on nutrition, health, interactive toys, and training for your pets.
+        </p>
+
+        {/* Filter Category Tabs */}
+        <div className="pet-blog-tabs">
+          <button
+            type="button"
+            className={`pet-blog-pill ${activeTab === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveTab('all')}
+          >
+            🌟 All Articles
+          </button>
+          <button
+            type="button"
+            className={`pet-blog-pill ${activeTab === 'cat' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cat')}
+          >
+            🐱 Cat Care & Toys
+          </button>
+          <button
+            type="button"
+            className={`pet-blog-pill ${activeTab === 'dog' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dog')}
+          >
+            🐶 Dog Care & Training
+          </button>
+        </div>
       </div>
+
+      {displayArticles.length === 0 ? (
+        <div className="pet-empty-blog-box" style={{textAlign: 'center', padding: '4rem 1.5rem', background: '#fff', borderRadius: '24px', border: '1.5px solid rgba(61, 123, 93, 0.14)'}}>
+          <h2 style={{fontSize: '1.5rem', fontWeight: '800', marginBottom: '0.5rem', color: 'var(--pet-text)'}}>No Blog Posts Found Yet 📰</h2>
+          <p style={{color: 'var(--pet-text-muted)', maxWidth: '540px', margin: '0 auto 1.5rem'}}>
+            Articles created in Shopify Admin ➔ Online Store ➔ Blog Posts will automatically appear here via Storefront API.
+          </p>
+          <Link to="/collections/all" className="featured-read-btn">
+            Explore Pet Products ➔
+          </Link>
+        </div>
+      ) : (
+        <div className="pet-blog-grid">
+          {filteredArticles.map((article) => (
+            <div className="pet-article-card" key={article.id}>
+              <Link to={`/blogs/${article.blog?.handle || blog.handle}/${article.handle}`} className="article-card-img-box">
+                {article.image ? (
+                  <img src={article.image.url} alt={article.image.altText || article.title} className="article-card-img" />
+                ) : (
+                  <div className="article-placeholder">🐾</div>
+                )}
+                <span className="article-card-badge">{article.category || 'Pet Care'}</span>
+              </Link>
+              <div className="article-card-body">
+                <div className="article-meta">
+                  <span>⏱️ {article.readTime || '5 min read'}</span>
+                  <span>•</span>
+                  <span>{new Date(article.publishedAt || Date.now()).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
+                </div>
+                <h3 className="article-card-title">
+                  <Link to={`/blogs/${article.blog?.handle || blog.handle}/${article.handle}`}>{article.title}</Link>
+                </h3>
+                <p className="article-card-excerpt">{article.excerpt || 'Discover practical pet care tips and advice.'}</p>
+                <div className="article-card-footer">
+                  <span className="article-author">✍️ Contributors</span>
+                  <Link to={`/blogs/${article.blog?.handle || blog.handle}/${article.handle}`} className="article-read-link">
+                    Read ➔
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-/**
- * @param {{
- *   article: ArticleItemFragment;
- *   loading?: HTMLImageElement['loading'];
- * }}
- */
-function ArticleItem({article, loading}) {
-  const publishedAt = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(article.publishedAt));
-  return (
-    <div className="blog-article" key={article.id}>
-      <Link to={`/blogs/${article.blog.handle}/${article.handle}`}>
-        {article.image && (
-          <div className="blog-article-image">
-            <Image
-              alt={article.image.altText || article.title}
-              aspectRatio="3/2"
-              data={article.image}
-              loading={loading}
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
-          </div>
-        )}
-        <h3>{article.title}</h3>
-        <small>{publishedAt}</small>
-      </Link>
-    </div>
-  );
-}
-
-// NOTE: https://shopify.dev/docs/api/storefront/latest/objects/blog
 const BLOGS_QUERY = `#graphql
   query Blog(
     $language: LanguageCode
@@ -151,11 +174,9 @@ const BLOGS_QUERY = `#graphql
         pageInfo {
           hasPreviousPage
           hasNextPage
-          hasNextPage
-          endCursor
           startCursor
+          endCursor
         }
-
       }
     }
   }
@@ -182,5 +203,4 @@ const BLOGS_QUERY = `#graphql
 `;
 
 /** @typedef {import('./+types/blogs.$blogHandle._index').Route} Route */
-/** @typedef {import('storefrontapi.generated').ArticleItemFragment} ArticleItemFragment */
 /** @typedef {ReturnType<typeof useLoaderData<typeof loader>>} LoaderReturnData */

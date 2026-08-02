@@ -24,43 +24,55 @@ export function CartLineItem({layout, line, childrenMap}) {
   const childrenLabelId = `cart-line-children-${id}`;
 
   return (
-    <li key={id} className="cart-line">
-      <div className="cart-line-inner">
-        {image && (
+    <li key={id} className={`cart-line-item ${layout === 'aside' ? 'in-drawer' : 'in-page'}`}>
+      <div className="cart-item-image-wrap">
+        {image ? (
           <Image
             alt={title}
             aspectRatio="1/1"
             data={image}
-            height={100}
+            height={80}
             loading="lazy"
-            width={100}
+            width={80}
+            className="cart-item-img"
           />
+        ) : (
+          <div className="cart-item-placeholder">🐾</div>
         )}
+      </div>
 
-        <div>
+      <div className="cart-item-main">
+        <div className="cart-item-top">
           <Link
             prefetch="intent"
             to={lineItemUrl}
+            className="cart-item-title"
+            title={product.title}
             onClick={() => {
               if (layout === 'aside') {
                 close();
               }
             }}
           >
-            <p>
-              <strong>{product.title}</strong>
-            </p>
+            {product.title}
           </Link>
-          <ProductPrice price={line?.cost?.totalAmount} />
-          <ul>
+          <CartLineRemoveButton lineIds={[id]} disabled={!!line.isOptimistic} />
+        </div>
+
+        {selectedOptions && selectedOptions.length > 0 && (
+          <div className="cart-item-options">
             {selectedOptions.map((option) => (
-              <li key={option.name}>
-                <small>
-                  {option.name}: {option.value}
-                </small>
-              </li>
+              <span key={option.name} className="cart-option-badge">
+                {option.name}: {option.value}
+              </span>
             ))}
-          </ul>
+          </div>
+        )}
+
+        <div className="cart-item-bottom">
+          <div className="cart-item-price">
+            <ProductPrice price={line?.cost?.totalAmount} />
+          </div>
           <CartLineQuantity line={line} />
         </div>
       </div>
@@ -87,9 +99,7 @@ export function CartLineItem({layout, line, childrenMap}) {
 }
 
 /**
- * Provides the controls to update the quantity of a line item in the cart.
- * These controls are disabled when the line item is new, and the server
- * hasn't yet responded that it was successfully added to the cart.
+ * Provides controls to update line item quantity.
  * @param {{line: CartLine}}
  */
 function CartLineQuantity({line}) {
@@ -99,39 +109,38 @@ function CartLineQuantity({line}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
+    <div className="pet-cart-stepper">
       <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
         <button
+          className="pet-stepper-btn reset"
           aria-label="Decrease quantity"
           disabled={quantity <= 1 || !!isOptimistic}
           name="decrease-quantity"
           value={prevQuantity}
         >
-          <span>&#8722; </span>
+          &#8722;
         </button>
       </CartLineUpdateButton>
-      &nbsp;
+
+      <span className="pet-stepper-count">{quantity}</span>
+
       <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
         <button
+          className="pet-stepper-btn reset"
           aria-label="Increase quantity"
           name="increase-quantity"
           value={nextQuantity}
           disabled={!!isOptimistic}
         >
-          <span>&#43;</span>
+          &#43;
         </button>
       </CartLineUpdateButton>
-      &nbsp;
-      <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
 }
 
 /**
- * A button that removes a line item from the cart. It is disabled
- * when the line item is new, and the server hasn't yet responded
- * that it was successfully added to the cart.
+ * Button that removes a line item from the cart.
  * @param {{
  *   lineIds: string[];
  *   disabled: boolean;
@@ -145,8 +154,14 @@ function CartLineRemoveButton({lineIds, disabled}) {
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
-        Remove
+      <button
+        disabled={disabled}
+        type="submit"
+        className="pet-item-remove-btn reset"
+        aria-label="Remove item"
+        title="Remove item"
+      >
+        ✕
       </button>
     </CartForm>
   );

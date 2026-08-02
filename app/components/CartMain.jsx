@@ -49,6 +49,13 @@ export function CartMain({layout, cart: originalCart}) {
       className={className}
       aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
     >
+      {/* Free Shipping Progress Notification */}
+      {linesCount > 0 && (
+        <div className="pet-shipping-bar">
+          <span>🎉 <strong>Free Express Worldwide Shipping</strong> Unlocked!</span>
+        </div>
+      )}
+
       <CartEmpty hidden={linesCount} layout={layout} />
       <div className="cart-details">
         <p id="cart-lines" className="sr-only">
@@ -90,15 +97,14 @@ export function CartMain({layout, cart: originalCart}) {
 function CartEmpty({hidden = false}) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
+    <div hidden={hidden} className="pet-cart-empty">
+      <div className="pet-empty-icon">🐾</div>
+      <h3>Your Cart is Currently Empty</h3>
       <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+        Your furry friend is waiting for their favorite treats, toys & cozy beds!
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link to="/collections" onClick={close} className="pet-empty-btn" prefetch="viewport">
+        Browse Pet Supplies ➔
       </Link>
     </div>
   );

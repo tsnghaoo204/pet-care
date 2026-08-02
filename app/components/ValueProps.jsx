@@ -2,27 +2,27 @@ export function ValueProps() {
   const values = [
     {
       id: 1,
-      icon: '🚚',
-      title: 'Giao Nhanh Hỏa Tốc',
-      desc: 'Nhận hàng nhanh chóng trong 24h để thú cưng không phải chờ đợi.',
+      icon: '🚀',
+      title: 'Worldwide Express Shipping',
+      desc: 'Fast, tracked shipping direct to your door so your pet never waits.',
     },
     {
       id: 2,
       icon: '🛡️',
-      title: 'Chất Liệu Safe & Non-Toxic',
-      desc: '100% cao su tự nhiên và nhựa mầm an toàn không gây độc hại khi cắn.',
+      title: '100% Safe & Non-Toxic',
+      desc: 'Made from natural rubber and food-grade BPA-free pet safe materials.',
     },
     {
       id: 3,
       icon: '🔄',
-      title: 'Đổi Trả Dễ Dàng trong 7 Ngày',
-      desc: 'Thú cưng không hứng thú? Hỗ trợ đổi sang mẫu đồ chơi khác miễn phí.',
+      title: '30-Day Easy Guarantee',
+      desc: 'Not a perfect fit for your pet? Enjoy effortless 30-day returns & exchanges.',
     },
     {
       id: 4,
-      icon: '📞',
-      title: 'Tư Vấn Chọn Đồ Dùng',
-      desc: 'Đội ngũ tư vấn theo kích thước, cân nặng và thói quen cắn của bé.',
+      icon: '💬',
+      title: '24/7 Expert Pet Advice',
+      desc: 'Our passionate support team is here to assist with sizing & recommendations.',
     },
   ];
 

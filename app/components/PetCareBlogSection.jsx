@@ -11,10 +11,10 @@ export function PetCareBlogSection({articles}) {
   return (
     <section className="pet-container" style={{marginTop: '3rem'}}>
       <div className="pet-section-header">
-        <div className="pet-section-badge">Góc Cẩm Nang Thú Cưng</div>
-        <h2 className="pet-section-title">Bài Viết & Cẩm Nang Chăm Sóc</h2>
+        <div className="pet-section-badge">Pet Care Guides</div>
+        <h2 className="pet-section-title">Expert Advice & Pet Guides</h2>
         <p className="pet-section-subtitle">
-          Cập nhật kiến thức chăm sóc và tư vấn bổ ích từ cửa hàng
+          Read helpful advice on pet nutrition, training toys, and healthy care
         </p>
       </div>
 
@@ -32,7 +32,7 @@ export function PetCareBlogSection({articles}) {
                 <h3 className="pet-blog-title">{article.title}</h3>
                 {article.excerpt && <p className="pet-blog-excerpt">{article.excerpt}</p>}
                 <Link to={`/blogs/${blogHandle}/${article.handle}`} className="pet-blog-link">
-                  Đọc bài viết ➔
+                  Read Guide ➔
                 </Link>
               </div>
             </div>

@@ -11,8 +11,21 @@ export function PaginatedResourceSection({
   ariaLabel,
   resourcesClassName,
 }) {
+  const defaultPageInfo = {
+    hasNextPage: false,
+    hasPreviousPage: false,
+    startCursor: null,
+    endCursor: null,
+  };
+
+  const safeConnection = {
+    pageInfo: connection?.pageInfo || defaultPageInfo,
+    nodes: connection?.nodes || [],
+    ...connection,
+  };
+
   return (
-    <Pagination connection={connection}>
+    <Pagination connection={safeConnection}>
       {({nodes, isLoading, PreviousLink, NextLink}) => {
         const resourcesMarkup = nodes.map((node, index) =>
           children({node, index}),

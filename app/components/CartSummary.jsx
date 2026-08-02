@@ -1,6 +1,7 @@
 import {CartForm, Money} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
-import {useFetcher} from 'react-router';
+import {useFetcher, Link} from 'react-router';
+import {useAside} from '~/components/Aside';
 
 /**
  * @param {CartSummaryProps}
@@ -16,7 +17,7 @@ export function CartSummary({cart, layout}) {
 
   return (
     <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
+      <h4 id={summaryId}>Summary</h4>
       <dl role="group" className="cart-subtotal">
         <dt>Subtotal</dt>
         <dd>
@@ -27,33 +28,53 @@ export function CartSummary({cart, layout}) {
           )}
         </dd>
       </dl>
-      <CartDiscounts
-        discountCodes={cart?.discountCodes}
-        discountsHeadingId={discountsHeadingId}
-        discountCodeInputId={discountCodeInputId}
-      />
-      <CartGiftCard
-        giftCardCodes={cart?.appliedGiftCards}
-        giftCardHeadingId={giftCardHeadingId}
-        giftCardInputId={giftCardInputId}
-      />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+
+      {layout === 'page' && (
+        <>
+          <CartDiscounts
+            discountCodes={cart?.discountCodes}
+            discountsHeadingId={discountsHeadingId}
+            discountCodeInputId={discountCodeInputId}
+          />
+          <CartGiftCard
+            giftCardCodes={cart?.appliedGiftCards}
+            giftCardHeadingId={giftCardHeadingId}
+            giftCardInputId={giftCardInputId}
+          />
+        </>
+      )}
+
+      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} layout={layout} />
     </div>
   );
 }
 
 /**
- * @param {{checkoutUrl?: string}}
+ * @param {{checkoutUrl?: string; layout?: string}}
  */
-function CartCheckoutActions({checkoutUrl}) {
+function CartCheckoutActions({checkoutUrl, layout}) {
+  const {close} = useAside();
+
+  if (layout === 'aside') {
+    return (
+      <div className="pet-checkout-actions">
+        <Link to="/cart" onClick={close} className="pet-checkout-btn">
+          <span>Proceed to Cart & Checkout ➔</span>
+        </Link>
+      </div>
+    );
+  }
+
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
+    <div className="pet-checkout-actions">
+      <a href={checkoutUrl} target="_self" className="pet-checkout-btn">
+        <span>Proceed to Checkout 🔒</span>
       </a>
-      <br />
+      <div className="pet-checkout-guarantee">
+        <span>🛡️ Safe Checkout • 30-Day Money Back Guarantee</span>
+      </div>
     </div>
   );
 }

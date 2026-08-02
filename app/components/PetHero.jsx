@@ -118,8 +118,8 @@ export function PetHero() {
             {/* Speech Bubble on Hover */}
             {isCatMemeHovered && (
               <div className="pet-speech-bubble bubble-gif-meme">
-                <span className="bubble-text">Nyan~ Sen ơi ghé sắm pate & tháp nhà cây cho tớ nhé! 🐾✨</span>
-                <Link to="/collections/all" className="bubble-link">Khám Phá Nhà Cây ➔</Link>
+                <span className="bubble-text">Meow~ Grab some yummy treats & cozy cat trees for me! 🐾✨</span>
+                <Link to="/collections/all" className="bubble-link">Explore Cat Trees ➔</Link>
               </div>
             )}
 
@@ -151,8 +151,8 @@ export function PetHero() {
             {/* Speech Bubble on Hover */}
             {isCatHovered && (
               <div className="pet-speech-bubble bubble-gif-cat">
-                <span className="bubble-text">Meo meo~ Sen ơi ghé sắm đồ chơi xinh cho tớ nè! 🐾✨</span>
-                <Link to="/collections/all" className="bubble-link">Khám Phá Ngay ➔</Link>
+                <span className="bubble-text">Meow~ Check out cute interactive cat toys & collars! 🐾✨</span>
+                <Link to="/collections/all" className="bubble-link">Shop Cat Toys ➔</Link>
               </div>
             )}
 
@@ -195,8 +195,8 @@ export function PetHero() {
             {/* Speech Bubble on Hover */}
             {isDogHovered && (
               <div className="pet-speech-bubble bubble-gif-dog">
-                <span className="bubble-text">Gâu gâu~ Cho cún xin chiếc xương gặm này đi Sen! 🦴✨</span>
-                <Link to="/collections/all" className="bubble-link">Sắm Đồ Chơi Cho Cún ➔</Link>
+                <span className="bubble-text">Woof woof~ Get me a tasty chew bone & durable toy please! 🦴✨</span>
+                <Link to="/collections/all" className="bubble-link">Shop Dog Toys ➔</Link>
               </div>
             )}
 

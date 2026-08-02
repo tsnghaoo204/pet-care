@@ -1,10 +1,10 @@
-import {fileURLToPath} from 'node:url';
-import {defineConfig} from 'vite';
-import {hydrogen} from '@shopify/hydrogen/vite';
-import {oxygen} from '@shopify/mini-oxygen/vite';
-import {reactRouter} from '@react-router/dev/vite';
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vite';
+import { hydrogen } from '@shopify/hydrogen/vite';
+import { oxygen } from '@shopify/mini-oxygen/vite';
+import { reactRouter } from '@react-router/dev/vite';
 
-export default defineConfig(({isSsrBuild}) => ({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [hydrogen(), oxygen(), reactRouter()],
   resolve: {
     alias: {
@@ -21,19 +21,19 @@ export default defineConfig(({isSsrBuild}) => ({
     ...(isSsrBuild
       ? {}
       : {
-          rollupOptions: {
-            output: {
-              manualChunks(id) {
-                if (id.includes('node_modules')) {
-                  return 'vendor';
-                }
-                if (id.includes('/app/components/')) {
-                  return 'app-components';
-                }
-              },
+        rollupOptions: {
+          output: {
+            manualChunks(id) {
+              if (id.includes('node_modules')) {
+                return 'vendor';
+              }
+              if (id.includes('/app/components/')) {
+                return 'app-components';
+              }
             },
           },
-        }),
+        },
+      }),
   },
   ssr: {
     optimizeDeps: {

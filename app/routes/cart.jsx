@@ -112,8 +112,11 @@ export default function Cart() {
   const cart = useLoaderData();
 
   return (
-    <div className="cart">
-      <h1>Cart</h1>
+    <div className="pet-container" style={{paddingTop: '2.5rem', paddingBottom: '4rem'}}>
+      <div className="pet-cart-page-header">
+        <div className="pet-section-badge">Shopping Bag</div>
+        <h1 className="pet-cart-page-title">Your Pet Care Cart 🛒</h1>
+      </div>
       <CartMain layout="page" cart={cart} />
     </div>
   );
